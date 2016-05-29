@@ -14,7 +14,7 @@ router.post('/sign_up', function (req, res, next) {
 	models.user
 		.create(req.body.user)
 		.then(function (user) { 
-			res.json(user); // Create the user
+			res.json(user.get({ role:'self' })); // Render the user (role indicates what JSON fields are visible)
 		})
 		.catch(function (errors) {
 			res.json(errors); // Respond with the errors 

@@ -2,7 +2,7 @@
 	"user" : {
 		"firstName" : "Joe",
 		"lastName": "Antonakakis",
-		"email": "jma353@cornell.edu", 
+		"email": "jma35@cornell.edu", 
 		"password": "hello_world"
 	}
 }

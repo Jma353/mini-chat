@@ -1,14 +1,24 @@
 'use strict';
-var bcrypt = require('bcrypt'); 
+var bcrypt = require('bcrypt-nodejs'); 
 
 module.exports = function(sequelize, DataTypes) {
 
-  var user = sequelize.define('user', {
+  // to add attr scoping 
+  var ssaclAttributeRoles = require('ssacl-attribute-roles'); 
+  var user = sequelize.define('user', {});
+  ssaclAttributeRoles(sequelize); 
+  ssaclAttributeRoles(user);  
+
+
+  user = sequelize.define('user', {
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true
+      }, 
+      roles: { 
+        self: true
       }
     },
     lastName: {
@@ -16,6 +26,9 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       validate: {
         notEmpty: true 
+      }, 
+      roles: {
+        self: true
       }
     },
     email: {
@@ -23,6 +36,9 @@ module.exports = function(sequelize, DataTypes) {
       validate: { 
         isEmail: true, 
         isUnqiue: sequelize.validateIsUnique('email') 
+      }, 
+      roles: {
+        self: true
       }
     },
     passwordDigest: {
@@ -30,7 +46,8 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false, 
       validate: {
         notEmpty: true 
-      }
+      }, 
+      roles: false
     }
   }, {
     classMethods: {
@@ -39,19 +56,17 @@ module.exports = function(sequelize, DataTypes) {
       }
     }, 
     instanceMethods: {
-      toJSON: function () {
-        var repr = this.dataValues; 
-        delete repr.passwordDigest; 
-        return { user: repr }; 
-      }
+      generateHash: function (pass) {
+        return bcrypt.hashSync(pass, bcrypt.genSaltSync(8), null);
+      } 
     }
   });
 
+  
   // beforeCreate hook 
-  user.beforeCreate(function (user, options) {
-    var saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS); 
-    var hashedPass = bcrypt.hashSync(user.passwordDigest, saltRounds); 
-    user.passwordDigest = hashedPass
+  user.beforeCreate(function (user, options) { 
+    var hashedPass = user.generateHash(user.passwordDigest); 
+    user.passwordDigest = hashedPass; 
   }); 
 
 
