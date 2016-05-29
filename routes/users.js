@@ -20,6 +20,18 @@ router.post('/sign_up', function (req, res, next) {
 			res.json(errors); // Respond with the errors 
 		}); 
 
-})
+}); 
+
+// Going to add passport, doing this for testing for now 
+router.post('/sign_in', function (req, res, next) {
+	var email = req.body.user.email; 
+	var password = req.body.user.password; 	
+	models.user.findOne({ where: { email: email }}).
+		then(function (user) {
+			var validPass = user.validPassword(password); 
+			res.json({ success: validPass }); 
+		}); 
+
+}); 
 
 module.exports = router;

@@ -11,6 +11,7 @@ module.exports = function(sequelize, DataTypes) {
 
 
   user = sequelize.define('user', {
+    // First Name
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -21,6 +22,7 @@ module.exports = function(sequelize, DataTypes) {
         self: true
       }
     },
+    // Last Name 
     lastName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -31,6 +33,7 @@ module.exports = function(sequelize, DataTypes) {
         self: true
       }
     },
+    // Email 
     email: {
       type: DataTypes.STRING,
       validate: { 
@@ -41,6 +44,7 @@ module.exports = function(sequelize, DataTypes) {
         self: true
       }
     },
+    // Password Hash 
     passwordDigest: {
       type: DataTypes.STRING, 
       allowNull: false, 
@@ -50,24 +54,32 @@ module.exports = function(sequelize, DataTypes) {
       roles: false
     }
   }, {
+    // Class Methods 
     classMethods: {
       associate: function(models) {
         // associations can be defined here
       }
     }, 
+    // Instance Methods 
     instanceMethods: {
       generateHash: function (pass) {
-        return bcrypt.hashSync(pass, bcrypt.genSaltSync(8), null);
-      } 
+        return bcrypt.hashSync(pass);
+      }, 
+      validPassword: function (pass) { 
+        return bcrypt.compareSync(pass, this.dataValues.passwordDigest); 
+      }
     }
   });
 
-  
-  // beforeCreate hook 
-  user.beforeCreate(function (user, options) { 
-    var hashedPass = user.generateHash(user.passwordDigest); 
-    user.passwordDigest = hashedPass; 
+
+
+  // Hooks 
+  user.beforeCreate(function (user, options) {
+    var hashedPass = user.generateHash(user.dataValues.passwordDigest); 
+    user.dataValues.passwordDigest = hashedPass; 
   }); 
+
+
 
 
   return user;
