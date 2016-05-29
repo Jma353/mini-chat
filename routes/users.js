@@ -31,15 +31,17 @@ router.post('/sign_in', function (req, res, next) {
 		if (!user) { return res.json({ success: user, data: { errors: [info.message] }}) }
 		
 		// At this point, we have successfully validated the user 
-		models.session.findOrCreate({ where: { userId: user.id }})
-			.then(function (session) {
-				// Since there exists no findOneOrCreate() function 
-				session = session[0]; 
-				// If the session is not active 
+		models.session.findOrCreate({ where: { userId: user.id }, include: [ { model: models.user, as: 'character' }] })
+			.spread(function (session, created) {
+
+				// This demonstrates eager loading / pulling a foreign relation in this framework 
+				console.log("this is the session's character");
+				console.log(session.dataValues.character.dataValues.email); 
+
 				if (!session.dataValues.isActive) {
 					// Update it + return 
 					session.update({
-						sessionCode: session.instanceMethods.genSessionCode(), 
+						sessionCode: session.genSessionCode(), 
 						isActive: true 
 					}).then(function (session) {
 						var sessionCode = session.dataValues.sessionCode; 
@@ -59,6 +61,24 @@ router.post('/sign_in', function (req, res, next) {
 	// Calling it in this way allow for success or failure decisions 
 }); 
 
+
+
+
+
+
+
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
 
 

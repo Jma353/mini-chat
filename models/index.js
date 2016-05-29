@@ -32,6 +32,12 @@ Object.keys(db).forEach(function(modelName) {
   }
 });
 
+
+// Associations in the app 
+sequelize.models.session.belongsTo(sequelize.models.user, { foreignKey: 'userId', as: 'character' }); 
+
+
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
