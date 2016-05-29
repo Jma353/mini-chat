@@ -1,6 +1,7 @@
 'use strict';
 var bcrypt = require('bcrypt-nodejs'); 
 
+
 module.exports = function(sequelize, DataTypes) {
 
   // to add attr scoping 
@@ -62,9 +63,11 @@ module.exports = function(sequelize, DataTypes) {
     }, 
     // Instance Methods 
     instanceMethods: {
+      // Make the hash for storage 
       generateHash: function (pass) {
         return bcrypt.hashSync(pass);
       }, 
+      // Validate incoming password 
       validPassword: function (pass) { 
         return bcrypt.compareSync(pass, this.dataValues.passwordDigest); 
       }

@@ -1,4 +1,5 @@
 var express = require('express');
+var passport = require('passport'); 
 var router = express.Router();
 var models = require('../models/index'); 
 
@@ -14,24 +15,23 @@ router.post('/sign_up', function (req, res, next) {
 	models.user
 		.create(req.body.user)
 		.then(function (user) { 
-			res.json(user.get({ role:'self' })); // Render the user (role indicates what JSON fields are visible)
+			return res.json(user.get({ role:'self' })); // Render the user (role indicates what JSON fields are visible)
 		})
 		.catch(function (errors) {
-			res.json(errors); // Respond with the errors 
+			return res.json(errors); // Respond with the errors 
 		}); 
 
 }); 
 
 // Going to add passport, doing this for testing for now 
 router.post('/sign_in', function (req, res, next) {
-	var email = req.body.user.email; 
-	var password = req.body.user.password; 	
-	models.user.findOne({ where: { email: email }}).
-		then(function (user) {
-			var validPass = user.validPassword(password); 
-			res.json({ success: validPass }); 
-		}); 
-
+	passport.authenticate("custom-login", function (err, user, info) {
+		if (err) { return next(err) } // Will draw 500
+		if (!user) { return res.json({ success: user, data: { errors: [info.message] }}) }
+		return res.json({ success: true }); 
+	})(req, res, next); 
+	// Need to call authenticate as a function in order for it to return properly 
+	// Calling it in this way allow for success or failure decisions 
 }); 
 
 module.exports = router;
