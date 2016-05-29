@@ -1,4 +1,5 @@
 'use strict';
+var crypto = require('crypto'); 
 
 module.exports = function(sequelize, DataTypes) {
   var session = sequelize.define('session', {
@@ -19,8 +20,24 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         // associations can be defined here
       }
+    }, 
+    // Instance methods 
+    instanceMethods: { 
+      // Generate a sessionCode
+      genSessionCode: function () {
+        return crypto.randomBytes(64).toString('hex'); 
+      }
     }
   });
+
+  // Hooks 
+  // Initial values
+  session.beforeCreate(function (session, options) {
+    session.dataValues.sessionCode = session.genSessionCode(); 
+    session.dataValues.isActive = true; 
+  }); 
+
+
 
   return session;
 };

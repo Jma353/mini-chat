@@ -2,6 +2,7 @@ var express = require('express');
 var passport = require('passport'); 
 var router = express.Router();
 var models = require('../models/index'); 
+var helpers = require('./helpers'); 
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -23,15 +24,41 @@ router.post('/sign_up', function (req, res, next) {
 
 }); 
 
-// Going to add passport, doing this for testing for now 
+
 router.post('/sign_in', function (req, res, next) {
 	passport.authenticate("custom-login", function (err, user, info) {
 		if (err) { return next(err) } // Will draw 500
 		if (!user) { return res.json({ success: user, data: { errors: [info.message] }}) }
-		return res.json({ success: true }); 
+		
+		// At this point, we have successfully validated the user 
+		models.session.findOrCreate({ where: { userId: user.id }})
+			.then(function (session) {
+				// Since there exists no findOneOrCreate() function 
+				session = session[0]; 
+				// If the session is not active 
+				if (!session.dataValues.isActive) {
+					// Update it + return 
+					session.update({
+						sessionCode: session.instanceMethods.genSessionCode(), 
+						isActive: true 
+					}).then(function (session) {
+						var sessionCode = session.dataValues.sessionCode; 
+						return res.json(helpers.responseJSON({ sessionCode: sessionCode }, true)); 
+					})
+				} 
+				// Else, just return 
+				else { 
+					var sessionCode = session.dataValues.sessionCode; 
+					return res.json(helpers.responseJSON({ sessionCode: sessionCode }, true)); 
+				}
+			}); 
+
+
 	})(req, res, next); 
 	// Need to call authenticate as a function in order for it to return properly 
 	// Calling it in this way allow for success or failure decisions 
 }); 
 
 module.exports = router;
+
+
