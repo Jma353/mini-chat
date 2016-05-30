@@ -19,6 +19,9 @@ module.exports = function(io) {
 
 
 
+
+
+
 	// Creation Endpoint 
 	router.post('/create', function (req, res, next) {
 		passport.authenticate("custom-token", function (err, user, info) {
@@ -77,20 +80,48 @@ module.exports = function(io) {
 			// Find the user's chats 
 			models.participant.findAll({ 
 				where: { userId: user.id }, 
-				include: { model: models.chat, as: 'chat' }
+				include: [{ model: models.chat, as: 'chat' }]
 			})
 			.then(function (participants) {
 				
 				// Get the chats 
-				var chats = participants.map(function(p) {
-					return p.getDataValue('chat'); 
+				var chats = participants.map(function (p) {
+					var chat = p.getDataValue('chat'); 
+					return chat; 
 				}); 
 
-				// Return thsose chats 
-				return res.json(helpers.responseJSON({ chats: chats }, true))
+				// Return those chats 
+				return res.json(helpers.responseJSON({ chats: chats }, true)); 
 
 			}); 
 
+		})(req, res, next); 
+	}); 
+
+	// Get users of a chat 
+	router.get('/participants/:chat_id', function (req, res, next) {
+		passport.authenticate("custom-token", function (err, user, info) {
+			if (err) {
+				return next(err); 
+			}
+			if (!user) {
+				return res.json(helpers.responseJSON({ errors: [info.message]}, false)); 
+			}
+
+			var chatId = req.params.chat_id; 
+			models.participant.findAll({
+				where: { chatId: chatId },
+				include: [ { model: models.user, as: 'user' }]
+			})
+			.then(function (participants) {
+
+				var users = participants.map(function (p) {
+					var user = p.getDataValue('user'); 
+					return user; 
+				}); 
+
+				return res.json(helpers.responseJSON({ users: users }, true)); 
+			}); 
 		})(req, res, next); 
 	}); 
 

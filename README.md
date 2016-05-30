@@ -56,6 +56,11 @@ GET /chats/index : Get a list of chats you're in
 #### HTTP Request HEADERS 
 	session_code: XYZ
 
+### Participants of a Chat
+GET /chats/participants/:chat_id : Get a list of users in a chat
+#### HTTP Request HEADERS 
+	session_code: XYZ
+
 ### Create
 POST /chats/create : Create a chat 
 #### HTTP Request HEADERS 

@@ -47,6 +47,12 @@ app.use('/users', users);
 app.use('/chats', chats); 
 
 
+// Router middleware for chats
+app.param("chat_id", function (req, res, next, chat_id) {
+  req.chatId = chat_id; 
+  next(); 
+}); 
+
 
 
 // catch 404 and forward to error handler
