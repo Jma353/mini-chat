@@ -18,10 +18,6 @@ module.exports = function(io) {
 	}); 
 
 
-
-
-
-
 	// Creation Endpoint 
 	router.post('/create', function (req, res, next) {
 		passport.authenticate("custom-token", function (err, user, info) {
@@ -89,6 +85,16 @@ module.exports = function(io) {
 				// Get the chats 
 				var chats = participants.map(function (p) {
 					var chat = p.getDataValue('chat'); 
+					var users = chat.getDataValue('users');
+
+					// Preprocess the data before returning (pointer so all these changes)
+					users = users.map( function (u) {
+						var userJSON = u.toJSON(); 
+						delete userJSON.participant; 
+						return userJSON; // To scope properly 
+					}); 
+
+
 					return chat; 
 				}); 
 
