@@ -9,6 +9,29 @@ router.get('/', function (req, res, next) {
   res.send('respond with a resource');
 });
 
+// Index 
+router.get('/index', function (req, res, next) {
+	passport.authenticate("custom-token", function (err, user, info) {
+		if (err) { // 500 error 
+			return next(err); 
+		} 
+		if (!user) { // Couldn't find user with this session 
+			return res.json(helpers.responseJSON({ errors: [info.message] }, false));  
+		}
+
+		models.user.findAll({ attributes: ['id', 'firstName', 'lastName', 'email']})
+		.then(function (users) { 
+			var users = users.map(function (u) {
+				return u.dataValues;
+			}); 
+			return res.json(helpers.responseJSON({ users: users }, true)); 
+
+		}); 
+
+	})(req, res, next); 
+}); 
+
+
 // Sign Up Endpoint 
 router.post('/sign_up', function (req, res, next) {
 	// Flip-flop these fields 

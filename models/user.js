@@ -1,26 +1,15 @@
 'use strict';
 var bcrypt = require('bcrypt-nodejs'); 
 
-
 module.exports = function(sequelize, DataTypes) {
 
-  // to add attr scoping 
-  var ssaclAttributeRoles = require('ssacl-attribute-roles'); 
-  var user = sequelize.define('user', {});
-  ssaclAttributeRoles(sequelize); 
-  ssaclAttributeRoles(user);  
-
-
-  user = sequelize.define('user', {
+  var user = sequelize.define('user', {
     // First Name
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true
-      }, 
-      roles: { 
-        self: true
       }
     },
     // Last Name 
@@ -29,9 +18,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       validate: {
         notEmpty: true 
-      }, 
-      roles: {
-        self: true
       }
     },
     // Email 
@@ -40,9 +26,6 @@ module.exports = function(sequelize, DataTypes) {
       validate: { 
         isEmail: true, 
         isUnqiue: sequelize.validateIsUnique('email') 
-      }, 
-      roles: {
-        self: true
       }
     },
     // Password Hash 
@@ -51,8 +34,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false, 
       validate: {
         notEmpty: true 
-      }, 
-      roles: false
+      }
     }
   }, {
     // Class Methods 
@@ -83,9 +65,9 @@ module.exports = function(sequelize, DataTypes) {
   }); 
 
 
-
-
   return user;
+
+
 };
 
 
