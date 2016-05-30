@@ -52,6 +52,11 @@ module.exports = function(sequelize, DataTypes) {
       // Validate incoming password 
       validPassword: function (pass) { 
         return bcrypt.compareSync(pass, this.dataValues.passwordDigest); 
+      }, 
+      toJSON: function () {
+        var repr = this.dataValues; 
+        delete repr.passwordDigest; 
+        return repr; 
       }
     }
   });

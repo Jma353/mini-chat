@@ -47,7 +47,17 @@ module.exports = function(io) {
 
 					models.participant.bulkCreate(partJSON).
 					then(function () {
-						return res.json(helpers.responseJSON({ chat: chat }, true)); 
+						models.participant.findAll({ 
+							where: { chatId: chat.id }, 
+							include: [ { model: models.user, as: 'user' }]
+						})
+						.then(function (participants) {
+							var users = participants.map(function (p) {
+								return p.user; 
+							}); 
+							var data = { chat: chat, users: users };
+							return res.json(helpers.responseJSON(data, true)); 
+						})
 					}); 
 				}); 
 		})(req, res, next); 

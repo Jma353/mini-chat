@@ -38,7 +38,7 @@ Object.keys(db).forEach(function(modelName) {
 // Pulling user from session 
 sequelize.models.session.belongsTo(sequelize.models.user, { foreignKey: 'userId', as: 'character' }); 
 // Pulling user from participant 
-sequelize.models.participant.belongsTo(sequelize.models.user, { foreignKey: 'userId' }); 
+sequelize.models.participant.belongsTo(sequelize.models.user, { foreignKey: 'userId', as: 'user' }); 
 // Pulling chat from participant 
 sequelize.models.participant.belongsTo(sequelize.models.chat, { foreignKey: 'chatId', as: 'chat' });
 // Pulling participants from chat 
