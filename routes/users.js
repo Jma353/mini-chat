@@ -9,6 +9,7 @@ router.get('/', function (req, res, next) {
   res.send('respond with a resource');
 });
 
+// Sign Up Endpoint 
 router.post('/sign_up', function (req, res, next) {
 	// Flip-flop these fields 
 	req.body.user.passwordDigest = req.body.user.password; 
@@ -24,7 +25,7 @@ router.post('/sign_up', function (req, res, next) {
 
 }); 
 
-
+// Sign In Endpoint 
 router.post('/sign_in', function (req, res, next) {
 	passport.authenticate("custom-login", function (err, user, info) {
 		if (err) { return next(err) } // Will draw 500
@@ -34,10 +35,6 @@ router.post('/sign_in', function (req, res, next) {
 		models.session.findOrCreate({ where: { userId: user.id }, include: [ { model: models.user, as: 'character' }] })
 			.spread(function (session, created) {
 
-				// This demonstrates eager loading / pulling a foreign relation in this framework 
-				console.log("this is the session's character");
-				console.log(session.dataValues.character.dataValues.email); 
-
 				if (!session.dataValues.isActive) {
 					// Update it + return 
 					session.update({
@@ -46,7 +43,7 @@ router.post('/sign_in', function (req, res, next) {
 					}).then(function (session) {
 						var sessionCode = session.dataValues.sessionCode; 
 						return res.json(helpers.responseJSON({ sessionCode: sessionCode }, true)); 
-					})
+					}); 
 				} 
 				// Else, just return 
 				else { 
@@ -62,6 +59,32 @@ router.post('/sign_in', function (req, res, next) {
 }); 
 
 
+// Sign Out Endpoint 
+router.post('/sign_out', function(req, res, next) {
+	// Grab the session code 
+	var sessionCode = req.headers.session_code; 
+
+	models.session.findOne({ where: { sessionCode: sessionCode }})
+		.then(function (session) {
+
+			// If no session results
+			if (!session) {
+				return res.json(helpers.responseJSON({ errors: ["No active session exists with this session code."]}, false)); 
+			} 
+			// If the session wasn't active to begin with 
+			else if (!session.dataValues.isActive) {
+				return res.json(helpers.responseJSON({ errors: ["This user is already logged out."]}, false)); 
+			} 
+			// Actually logging out of the session 
+			else { 
+				session.update({ isActive: false })
+					.then(function (session) {
+						return res.json(helpers.responseJSON({}, true)); 
+					}); 
+			}
+		}); 
+
+}); 
 
 
 
