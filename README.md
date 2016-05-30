@@ -18,6 +18,12 @@ To access endpoints of this app, one can use [httpie](https://github.com/jkbrzt/
 # Endpoints 
 ## Users 
 
+### Index 
+GET /users/index : Get a list of users using the platform 
+#### HTTP Request HEADERS 
+	session_code: XYZ 
+
+
 ### Sign Up 
 POST /users/sign_up : Sign up a user 
 #### HTTP Request BODY  
@@ -30,11 +36,13 @@ POST /users/sign_up : Sign up a user
 		}
 	}
 
+### Sign In 
 POST /users/sign_in : Sign in as a user (getting a session code back)
 #### HTTP Request HEADERS 
 	E: jma353@cornell.edu
 	P: this_is_my_password
 
+### Sign Out 
 POST /users/sign_out : Sign out a user 
 #### HTTP Request HEADERS 
 	session_code: XYZ
