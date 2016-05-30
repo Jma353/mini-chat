@@ -1,0 +1,49 @@
+<!DOCTYPE html> 
+<html>
+	
+	<head>
+
+		<style>
+			html { font-family: "Avenir Next" !important; }
+			#messages { list-style: none; }
+		</style> 
+	</head>
+
+	<body>
+		Hello world!
+
+		<form id="chatThing" action="">
+			<input id="chat"></input>
+			<button>Send</button>
+		</form>
+
+		<ul id="messages"></ul> 
+
+
+
+		<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script> 
+		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+		<script>
+			var ip = "10.129.0.81"; 
+			var socket = io("http://" + ip + ":3000/chat"); 
+			$('#chatThing').on('submit', function () {
+				var msgJSON = { myMessage: $('#chat').val() }
+				socket.emit('msg', msgJSON); 
+				$('#chat').val(''); 
+				return false; 
+			}); 
+
+			socket.on('msg', function (msg) {
+				var newRow = $('<li>').text(msg);
+				$('#messages').append(newRow); 
+			}); 
+
+
+
+		</script> 
+
+
+	</body>
+
+
+</html> 

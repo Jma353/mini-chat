@@ -33,8 +33,16 @@ Object.keys(db).forEach(function(modelName) {
 });
 
 
-// Associations in the app 
+// ASSOCIATIONS
+// Pulling user from session 
 sequelize.models.session.belongsTo(sequelize.models.user, { foreignKey: 'userId', as: 'character' }); 
+// Pulling user from participant 
+sequelize.models.participant.belongsTo(sequelize.models.user, { foreignKey: 'userId' }); 
+// Pulling participants from chat 
+sequelize.models.chat.hasMany(sequelize.models.participant)
+// Two-way association between users + chats 
+sequelize.models.chat.belongsToMany(sequelize.models.user, { through: 'participant' }); 
+sequelize.models.user.belongsToMany(sequelize.models.chat, { through: 'participant' }); 
 
 
 
@@ -42,3 +50,7 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 module.exports = db;
+
+
+
+

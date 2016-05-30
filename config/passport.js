@@ -33,18 +33,26 @@ module.exports = function (passport) {
 
 	passport.use('custom-token', new CustomStrategy(
 		function (req, done) {
-			models.sessions.findOne({ where: { sessionCode: req.headers.session_code }})
-				.then(function (session) {
-					// If the session doesn't exist 
-					if (!session) {
-						done(null, false, { message: "No user exists with that session code" }); 
-					} else {
-						
-					}
-				})
+			models.session.findOne({ 
+				where: { sessionCode: req.headers.session_code }, 
+				include: [{ model: models.user, as: 'character' }]
+			})
+			.then(function (session) {
+				if (!session) {
+					done(null, false, { message: "No user exists with that session code." }); 
+				} else if (!session.isActive){
+					done(null, false, { message: "This session is not active." }); 
+				} else { 
+					done(null, session.getDataValue('character')); 
+				}
+			})
+			.catch(function (err) { 
+				done(err, false, { message: "There was an error on the backend." }); 
+			}); 
 		}
-
 	)); 
+
+	
 
 
 }

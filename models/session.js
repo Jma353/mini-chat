@@ -16,6 +16,7 @@ module.exports = function(sequelize, DataTypes) {
     // Is active boolean 
     isActive: DataTypes.BOOLEAN
   }, {
+    // Class Methods 
     classMethods: {
       associate: function(models) {
         // associations can be defined here
@@ -33,8 +34,9 @@ module.exports = function(sequelize, DataTypes) {
   // Hooks 
   // Initial values
   session.beforeCreate(function (session, options) {
-    session.dataValues.sessionCode = session.genSessionCode(); 
-    session.dataValues.isActive = true; 
+    var sessionCode = session.genSessionCode(); 
+    session.setDataValue('sessionCode', sessionCode); 
+    session.setDataValue('isActive', true); 
   }); 
 
 

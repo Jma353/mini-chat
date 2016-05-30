@@ -4,24 +4,10 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var routes = require('./routes/index');
-var users = require('./routes/users');
 
 var app = express();
 
-// TO SET ENV VARIABLES 
-var dotenv = require('dotenv'); 
-dotenv.load(); 
 
-// TO LOAD PASSPORT
-var passport = require('passport'); 
-app.use(passport.initialize()); 
-
-
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -32,13 +18,35 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
+// REMOVAL OF JADE ENGINE 
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'jade');
+app.use(express.static(path.join(__dirname, 'views')));
 
-app.use('/', routes);
-app.use('/users', users);
 
+// TO SET ENV VARIABLES 
+var dotenv = require('dotenv'); 
+dotenv.load(); 
+
+// TO LOAD PASSPORT
+var passport = require('passport'); 
+app.use(passport.initialize()); 
 
 // CONFIGURE PASSPORT 
 require('./config/passport')(passport); // Loads custom strategies 
+
+// ATTACH SOCKET IO (see www file as well)
+app.io = require('socket.io')(); 
+
+// LOAD ALL ROUTES
+var routes = require('./routes/index');
+var users = require('./routes/users');
+var chats = require('./routes/chats')(app.io); 
+
+// REGISTER ROUTES 
+app.use('/', routes);
+app.use('/users', users);
+app.use('/chats', chats); 
 
 
 
@@ -57,18 +65,19 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
+    res.json({
       message: err.message,
       error: err
     });
   });
 }
 
+
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
-  res.render('error', {
+  res.json({
     message: err.message,
     error: {}
   });
