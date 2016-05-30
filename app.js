@@ -18,11 +18,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-// REMOVAL OF JADE ENGINE 
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
-app.use(express.static(path.join(__dirname, 'views')));
 
+// REMOVAL OF JADE ENGINE + BASIC STATIC FILES 
+app.use(express.static(path.join(__dirname, 'views')));
 
 // TO SET ENV VARIABLES 
 var dotenv = require('dotenv'); 

@@ -6,7 +6,11 @@ module.exports = {
 
 
 	responseJSON: function(data, bool) {
-		return { success: bool, data: data }
+		var resp = { success: bool }; 
+		if (data != null) {
+			resp.data = data; 
+		}
+		return resp; 
 	}
 
 	

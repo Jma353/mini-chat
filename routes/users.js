@@ -79,7 +79,7 @@ router.post('/sign_out', function(req, res, next) {
 			else { 
 				session.update({ isActive: false })
 					.then(function (session) {
-						return res.json(helpers.responseJSON({}, true)); 
+						return res.json(helpers.responseJSON(null, true)); 
 					}); 
 			}
 		}); 

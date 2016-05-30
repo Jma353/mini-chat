@@ -33,6 +33,7 @@ Object.keys(db).forEach(function(modelName) {
 });
 
 
+
 // ASSOCIATIONS
 // Pulling user from session 
 sequelize.models.session.belongsTo(sequelize.models.user, { foreignKey: 'userId', as: 'character' }); 

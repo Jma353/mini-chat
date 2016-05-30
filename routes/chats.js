@@ -28,9 +28,28 @@ module.exports = function(io) {
 			}
 
 			// If we got here, we're fine
-			models.chat.create({ userId: user.id })
+			models.chat.create()
 				.then(function (chat) {
-					return res.json(chat); 
+					// At this point, we have chat
+					var usersInChat = req.body.participants.concat(user.id); 
+
+					// From the array of participants, construct array of proper JSON 
+					// to instantiate participant models 
+					var partJSON = usersInChat.map(function (id) {
+						return { 
+							chatId: chat.getDataValue('id'), 
+							userId: id, 
+							isActive: true
+						}; 
+					});
+
+					models.participant.bulkCreate(partJSON).
+					then(function () {
+						return res.json(helpers.responseJSON(null, true)); 
+					}); 
+
+
+
 				}); 
 		})(req, res, next); 
 	}); 
@@ -41,13 +60,9 @@ module.exports = function(io) {
 
 	nsp.on("connection", function (socket) {
 
-
 		socket.on("msg", function (msg) { 
 			nsp.emit("msg", msg.myMessage); 
 		}); 
-
-
-
 
 
 	}); 
