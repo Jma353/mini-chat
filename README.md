@@ -43,6 +43,11 @@ POST /users/sign_out : Sign out a user
 
 ## Chats
 
+### Index 
+GET /chats/index : Get a list of chats you're in 
+#### HTTP Request HEADERS 
+	session_code: XYZ
+
 ### Create
 POST /chats/create : Create a chat 
 #### HTTP Request HEADERS 

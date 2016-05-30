@@ -18,6 +18,8 @@ module.exports = function(io) {
 	}); 
 
 
+
+	// Creation Endpoint 
 	router.post('/create', function (req, res, next) {
 		passport.authenticate("custom-token", function (err, user, info) {
 			if (err) { // 500 error 
@@ -47,12 +49,41 @@ module.exports = function(io) {
 					then(function () {
 						return res.json(helpers.responseJSON({ chat: chat }, true)); 
 					}); 
-
-
-
 				}); 
 		})(req, res, next); 
 	}); 
+
+
+	// Chat index endpoint 
+	router.get('/index', function (req, res, next) {
+		passport.authenticate("custom-token", function (err, user, info) {
+			if (err) { // 500 error
+				return next(err); 
+			} 
+			if (!user) {
+				return res.json(helpers.responseJSON({ errors: [info.message]}, false)); 
+			}
+
+			// Find the user's chats 
+			models.participant.findAll({ 
+				where: { userId: user.id }, 
+				include: { model: models.chat, as: 'chat' }
+			})
+			.then(function (participants) {
+				
+				// Get the chats 
+				var chats = participants.map(function(p) {
+					return p.getDataValue('chat'); 
+				}); 
+
+				// Return thsose chats 
+				return res.json(helpers.responseJSON({ chats: chats }, true))
+
+			}); 
+
+		})(req, res, next); 
+	}); 
+
 
 
 

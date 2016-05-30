@@ -39,6 +39,8 @@ Object.keys(db).forEach(function(modelName) {
 sequelize.models.session.belongsTo(sequelize.models.user, { foreignKey: 'userId', as: 'character' }); 
 // Pulling user from participant 
 sequelize.models.participant.belongsTo(sequelize.models.user, { foreignKey: 'userId' }); 
+// Pulling chat from participant 
+sequelize.models.participant.belongsTo(sequelize.models.chat, { foreignKey: 'chatId', as: 'chat' });
 // Pulling participants from chat 
 sequelize.models.chat.hasMany(sequelize.models.participant)
 // Two-way association between users + chats 
