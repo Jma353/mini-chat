@@ -80,7 +80,9 @@ module.exports = function(io) {
 			// Find the user's chats 
 			models.participant.findAll({ 
 				where: { userId: user.id }, 
-				include: [{ model: models.chat, as: 'chat' }]
+					include: [{ model: models.chat, as: 'chat', 
+						include: [{ model: models.user }]
+				}]
 			})
 			.then(function (participants) {
 				
