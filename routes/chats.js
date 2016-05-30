@@ -45,7 +45,7 @@ module.exports = function(io) {
 
 					models.participant.bulkCreate(partJSON).
 					then(function () {
-						return res.json(helpers.responseJSON(null, true)); 
+						return res.json(helpers.responseJSON({ chat: chat }, true)); 
 					}); 
 
 
