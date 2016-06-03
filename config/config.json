@@ -6,11 +6,10 @@
     "dialect": "postgres"
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
+    "database": "mini_chat_test",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "port": "5432", 
+    "dialect": "postgres"
   },
   "production": {
     "username": "root",

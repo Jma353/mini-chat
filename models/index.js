@@ -16,6 +16,7 @@ if (config.use_env_variable) {
   var sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
+
 fs
   .readdirSync(__dirname)
   .filter(function(file) {
@@ -51,6 +52,7 @@ sequelize.models.user.belongsToMany(sequelize.models.chat, { through: 'participa
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
 
 module.exports = db;
 

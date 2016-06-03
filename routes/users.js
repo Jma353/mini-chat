@@ -40,7 +40,7 @@ router.post('/sign_up', function (req, res, next) {
 	models.user
 		.create(req.body.user)
 		.then(function (user) { 
-			return res.json(user.get({ role:'self' })); // Render the user (role indicates what JSON fields are visible)
+			return res.json(user); // Render the user (role indicates what JSON fields are visible)
 		})
 		.catch(function (errors) {
 			return res.json(errors); // Respond with the errors 

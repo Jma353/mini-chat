@@ -19,6 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 
+
 // REMOVAL OF JADE ENGINE + BASIC STATIC FILES 
 app.use(express.static(path.join(__dirname, 'views')));
 

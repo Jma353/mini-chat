@@ -2,7 +2,7 @@
 
 // b/c we passed in app.io 
 
-module.exports = function(io) {
+module.exports = function (io) {
 
 	var express = require('express'); 
 	var passport = require('passport'); 
@@ -87,7 +87,7 @@ module.exports = function(io) {
 					var chat = p.getDataValue('chat'); 
 					var users = chat.getDataValue('users');
 
-					// Preprocess the data before returning (pointer so all these changes)
+					// Preprocess the data before returning (pointer so all these change)
 					users = users.map( function (u) {
 						var userJSON = u.toJSON(); 
 						delete userJSON.participant; 
@@ -132,8 +132,6 @@ module.exports = function(io) {
 			}); 
 		})(req, res, next); 
 	}); 
-
-
 
 
 	var nsp = io.of('/chat'); 
